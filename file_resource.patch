@@ -1,0 +1,51 @@
+--- file_resource.inc	2015-12-01 08:53:31.456619297 -0500
++++ file_resource.new	2015-12-01 08:52:25.612302836 -0500
+@@ -189,6 +189,15 @@
+   );
+ }
+ 
++// aof1 hack to validate files
++function _file_resource_validator () {
++  $extensions = 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp jp2 tiff';
++  $validators = array(
++    'file_validate_extensions' => array($extensions),
++  );
++  return $validators;
++}
++
+ /**
+  * Adds new files and returns the files array.
+  *
+@@ -204,7 +213,14 @@
+     // file_save_upload() validates the file extension and name's length. File
+     // size is limited by the upload_max_filesize directive in php.ini.
+     $scheme = file_default_scheme();
+-    $file = file_save_upload($field_name, array(), "$scheme://");
++
++    // aof1
++    // $file = file_save_upload($field_name, array(), "$scheme://");
++
++    // aof1 hack to validate files
++    $validators = _file_resource_validator();
++    $file = file_save_upload($field_name, $validators, "$scheme://");    
++    // aof1 hack to validate files END
+ 
+     if (!empty($file->fid)) {
+       // Change the file status from temporary to permanent.
+@@ -421,8 +437,14 @@
+  */
+ function _services_file_check_name_extension($name) {
+   // This whitelist is copied from file_save_upload().
+-  $extensions = 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp';
+ 
++  // aof1 hack to validate files
++  //$extensions = 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp';
++
++  // aof1 hack to validate files  
++  $extensions = 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp jp2 tiff';  
++  // aof1 hack to validate files END
++  
+   // Get the part of the name after the last period (".").
+   $name = explode('.', $name);
+   $last = array_pop($name);
+
